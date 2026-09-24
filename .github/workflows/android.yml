@@ -41,14 +41,15 @@ jobs:
           set -o pipefail
           gradle --no-daemon --stacktrace --info             :client:assembleDebug             :manager:assembleDebug             2>&1 | tee build-error.log
 
-      - name: Show Build Error
-        if: steps.build.outcome == 'failure'
-        run: |
-          echo "## Android Build Error" >> "$GITHUB_STEP_SUMMARY"
-          echo '```text' >> "$GITHUB_STEP_SUMMARY"
-          cat build-error.log >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-
+- name: Show Build Error
+  if: steps.build.outcome == 'failure'
+  run: |
+    echo "## Android Build Error" >> "$GITHUB_STEP_SUMMARY"
+    echo "" >> "$GITHUB_STEP_SUMMARY"
+    echo "آخرین 200 خط گزارش Build:" >> "$GITHUB_STEP_SUMMARY"
+    echo '```text' >> "$GITHUB_STEP_SUMMARY"
+    tail -n 200 build-error.log >> "$GITHUB_STEP_SUMMARY"
+    echo '```' >> "$GITHUB_STEP_SUMMARY"
       - name: Stop if Build Failed
         if: steps.build.outcome == 'failure'
         run: exit 1
